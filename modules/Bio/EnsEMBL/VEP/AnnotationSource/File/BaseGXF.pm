@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2016-2021] EMBL-European Bioinformatics Institute
+Copyright [2016-2022] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -721,12 +721,18 @@ sub _add_translation {
   $translation->end($offset);
   $translation->end_Exon($ordered_cdss->[-1]->{_exon});
 
+  my $chr = $tr->{slice}->seq_region_name;
+
   # translate
   # we have to delete slice otherwise the API tries to look up codon tables etc
   # from a non-existent adaptor
   my $slice = delete($tr->{slice});
   $tr->{_variation_effect_feature_cache}->{peptide} = $translation->seq;
   $tr->{_variation_effect_feature_cache}->{codon_table} = 1;
+  if($chr eq 'MT') {
+    $tr->{_variation_effect_feature_cache}->{codon_table} = 2;
+  }
+
   $tr->{slice} = $slice;
 
   return $translation;

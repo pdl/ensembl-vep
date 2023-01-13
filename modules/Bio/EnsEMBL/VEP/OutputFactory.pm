@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2016-2021] EMBL-European Bioinformatics Institute
+Copyright [2016-2022] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -202,6 +202,7 @@ sub new {
     hgvsg_use_accession
     spdi
     sift
+    ga4gh_vrs
     polyphen
     polyphen_analysis
 
@@ -1283,6 +1284,17 @@ sub VariationFeatureOverlapAllele_to_output_hash {
       
     if(my $spdi = $vf->{_spdi_genomic}->{$hash->{Allele}}){
       $hash->{SPDI} = $spdi;  
+    }
+  }
+
+  # ga4gh_vrs
+  if ($self->{ga4gh_vrs}) {
+    $vf->{_ga4gh_spdi_genomic} = $vf->spdi_genomic();
+
+    if (my $ga4gh_spdi = $vf->{_ga4gh_spdi_genomic}->{$hash->{Allele}}) {
+      if ($ga4gh_spdi =~ /^NC/) {
+        $hash->{GA4GH_SPDI} = $ga4gh_spdi;
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 =head1 LICENSE
 
-Copyright [2016-2021] EMBL-European Bioinformatics Institute
+Copyright [2016-2022] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -381,6 +381,7 @@ our %REQUIRES = (
   phyloP    => [qw(ucsc_assembly)],
   phastCons => [qw(ucsc_assembly)],
   custom_multi_allelic => [qw(custom)],
+  ga4gh_vrs => [qw(json)]
 );
 
 # incompatible options
@@ -395,7 +396,7 @@ our %INCOMPATIBLE = (
   tab         => [qw(vcf json)],
   individual  => [qw(minimal)],
   check_ref   => [qw(lookup_ref)],
-  check_svs   => [qw(offline)],
+  check_svs   => [qw(offline)]
 );
 
 # deprecated/replaced flags

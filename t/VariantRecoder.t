@@ -1,4 +1,4 @@
-# Copyright [2016-2021] EMBL-European Bioinformatics Institute
+# Copyright [2016-2022] EMBL-European Bioinformatics Institute
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ SKIP: {
   my $can_use_db = $db_cfg && scalar keys %$db_cfg && !$@;
 
   ## REMEMBER TO UPDATE THIS SKIP NUMBER IF YOU ADD MORE TESTS!!!!
-  skip 'No local database configured', 27 unless $can_use_db;
+  skip 'No local database configured', 29 unless $can_use_db;
 
   my $multi = Bio::EnsEMBL::Test::MultiTestDB->new('homo_vepiens') if $can_use_db;
   
@@ -373,6 +373,77 @@ SKIP: {
     ],
     'recode - output MANE Select and fields'
   );
+
+  my $vr_ga4gh_vrs = Bio::EnsEMBL::VEP::VariantRecoder->new(
+                      {%$cfg_hash, %$db_cfg, offline => 0,
+                       database => 1, species => 'homo_vepiens',
+                       ga4gh_vrs => 1, fields => 'spdi'});
+  is_deeply(
+    $vr_ga4gh_vrs->recode('rs142513484'),
+    [
+     {
+      'T' => {
+        'input' => 'rs142513484',
+        'spdi' => [
+           'NC_000021.9:25585732:C:T'
+        ],
+        'ga4gh_vrs' => [
+           {
+             'location' => {
+                 'sequence_id' => 'refseq:NC_000021.9',
+                 'type' => 'SequenceLocation',
+                 'interval' => {
+                     'type' => 'SimpleInterval',
+                     'end' => 25585733,
+                     'start' => 25585732
+                 }
+             },
+             'type' => 'Allele',
+             'state' => {
+                'sequence' => 'T',
+                'type' => 'SequenceState'
+             }
+           }
+        ]
+      }
+     }
+   ],
+   'recode - SNV ID input - output GA4GH VRS Allele, SPDI'
+   );
+
+   my $vrs_input_2 = 'NC_000021.9:25585732:C:T';
+   is_deeply(
+     $vr_ga4gh_vrs->recode($vrs_input_2),
+     [
+      {
+       'T' => {
+         'input' => 'NC_000021.9:25585732:C:T',
+         'spdi' => [
+            'NC_000021.9:25585732:C:T'
+         ],
+         'ga4gh_vrs' => [
+            {
+              'location' => {
+                  'sequence_id' => 'refseq:NC_000021.9',
+                  'type' => 'SequenceLocation',
+                  'interval' => {
+                      'type' => 'SimpleInterval',
+                      'end' => 25585733,
+                      'start' => 25585732
+                  }
+              },
+              'type' => 'Allele',
+              'state' => {
+                 'sequence' => 'T',
+                 'type' => 'SequenceState'
+              }
+            }
+         ]
+       }
+      }
+    ],
+    'recode - SNV SPDI input - output GA4GH VRS Allele, SPDI'
+    );
 
   my $vr_mane_hgvs = Bio::EnsEMBL::VEP::VariantRecoder->new({%$cfg_hash, %$db_cfg, offline => 0, database => 1, species => 'homo_vepiens', mane_select => 1, fields => 'spdi'});
 

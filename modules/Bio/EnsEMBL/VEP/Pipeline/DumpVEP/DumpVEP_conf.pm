@@ -1,7 +1,7 @@
 =head1 LICENSE
 
 Copyright [1999-2015] Wellcome Trust Sanger Institute and the EMBL-European Bioinformatics Institute
-Copyright [2016-2021] EMBL-European Bioinformatics Institute
+Copyright [2016-2022] EMBL-European Bioinformatics Institute
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -96,6 +96,9 @@ sub default_options {
 
     # include LRGs in dumps
     lrg => 1,
+
+    # don't check metadata db for status of variation data
+    skip_meta_checks => 0,
 
     # don't change this unless you know what you're doing!!!
     region_size => 1e6,
@@ -255,6 +258,7 @@ sub pipeline_analyses {
       -module        => 'Bio::EnsEMBL::VEP::Pipeline::DumpVEP::InitDump',
       -parameters    => {
         group           => 'core',
+        skip_meta_checks => $self->o('skip_meta_checks'),
       },
       -rc_name       => 'default',
       -hive_capacity => 1,
@@ -269,6 +273,7 @@ sub pipeline_analyses {
       -module        => 'Bio::EnsEMBL::VEP::Pipeline::DumpVEP::InitDump',
       -parameters    => {
         group           => 'otherfeatures',
+        skip_meta_checks => $self->o('skip_meta_checks'),
       },
       -rc_name       => 'default',
       -hive_capacity => 1,
